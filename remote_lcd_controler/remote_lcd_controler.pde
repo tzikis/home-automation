@@ -179,7 +179,7 @@ void display_menu(void)
   
   #define FIRST_TARGET 0x7267
   #define SECOND_TARGET 0x7B8B
-  #define THIRD_TARGET 0x6603
+  #define THIRD_TARGET 0x2b69
   
   targets[0] = FIRST_TARGET;
   targets[1] = FIRST_TARGET;
