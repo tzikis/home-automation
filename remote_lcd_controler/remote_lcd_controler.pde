@@ -51,7 +51,10 @@ struct menu_item menu_items[] =
   {"Shutter 2 - Close", SECOND_TARGET, CLOSE},
   {"Shutter 2 - Stop", SECOND_TARGET, HALT},
   {"Bath Light - Open", THIRD_TARGET, OPEN},
-  {"Bath Light - Close", THIRD_TARGET, CLOSE}
+  {"Bath Light - Close", THIRD_TARGET, CLOSE}//,
+//  {"Shutter 1 - Open", FIRST_TARGET, OPEN},
+//  {"Shutter 1 - Close", FIRST_TARGET, CLOSE},
+//  {"Shutter 1 - Stop", FIRST_TARGET, HALT}
 };  
 
 //select the symbol we'll be using for our selector by defining the appropriate macro.
@@ -181,12 +184,28 @@ void display_menu(void)
 {
   //first, clear the screen
   glcd.clear();
-  for(int i = 0; i< menu_size; i++)
+  
+  //this is voodoo. no need to understand it
+  int page = (menu_pos/8);
+  for(int i = page*8; (menu_size - menu_pos < 8) && (menu_size/8 == page) ? i < menu_size : i < 8*(page+1) ; i++)
   {
-    glcd.drawstring(6, i, menu_items[i].menu_string);    
+    glcd.drawstring(6, i - page*8, menu_items[i - page*8].menu_string);    
+  }
+  
+  //if we have more than one pages, show them to the user!
+  if(menu_size > 8)
+  {
+    //draw a circle on the top right for each page, and fill the circle for the page we're in
+    for(int i = 0; i <= menu_size/8; i++)
+    {
+      if(i == page) //glcd.drawchar(122, i, 7);
+        glcd.fillcircle(124, 3*(2*i+1), 2, BLACK);
+      else //glcd.drawchar(122, i, 9);
+        glcd.drawcircle(124, 3*(2*i+1), 2, BLACK);
+      }
   }
   //draw the selection character on the right line
-  glcd.drawchar(0, menu_pos, SEL_STAR);
+  glcd.drawchar(0, menu_pos%8, SEL_STAR);
   
   //display our screen
   glcd.display();  
