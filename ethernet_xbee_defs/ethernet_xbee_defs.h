@@ -1,11 +1,13 @@
-#define STATE_OFF 32
-#define STATE_ON 33
+#define STATE_OFF 32	//Space
+#define STATE_ON 33		//!
 #define STATE_AUTO_ON 34
 #define STATE_AUTO_OFF 35
 
-#define OPEN 36
-#define CLOSE 37
-#define AUTO 38
+#define STATE_UNDEF 46
+
+#define OPEN 36		//$
+#define CLOSE 37	//%
+#define AUTO 38		//&
 
 #define ENABLE_PER 39
 #define ENABLE_EVT 40
