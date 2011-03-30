@@ -43,6 +43,12 @@ const int alarmPin = 8;
 //to sound the alarm
 const int buzzerPin = 9;
 
+const int backlightSwitchPin = A0;
+const int backlightPin = 10;
+
+#define LIGHT_VALUE_ON 200
+#define LIGHT_VALUE_OFF 20
+
 //As long as this variable is enabled, we sound the alarm
 //by changing values to the buzzer to create a beep beep
 //effect with random intervals and pitch
@@ -91,11 +97,15 @@ void setup()
   pinMode(alarmPin, INPUT);
   pinMode(buzzerPin, OUTPUT);
   
+  pinMode(backlightPin, OUTPUT);
+  
   //Let the xbee-arduino API know our baudrate is 57600
   xbee.begin(57600);
   //Initialize the LCD with the size (ours is 16x2)
   lcd.begin(16, 2);
   blinkLED(ledPin, 13, 100); // blink an LED at the start of the program, to show the code is running
+  
+//  Serial.begin(9600);
 }
 
 void loop()
@@ -364,6 +374,18 @@ void checkButtons()
   //copy the current state to oldstate
   oldSelState = selectionState;
   oldSetState = setState;
+  
+    int light_button_state = digitalRead(backlightSwitchPin);
+//    Serial.println(light_button_state, DEC);
+    if(light_button_state)
+    {
+      analogWrite(backlightPin, LIGHT_VALUE_ON);
+    }
+    else
+    {
+      analogWrite(backlightPin, LIGHT_VALUE_OFF);
+    }
+  
   //update the alarm state
   alarmActive = digitalRead(alarmPin);
 }
