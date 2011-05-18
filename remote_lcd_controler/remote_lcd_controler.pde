@@ -28,9 +28,8 @@ const int buttonPin2 = 2;     // the number of the pushbutton pin
 #define FIRST_TARGET 0x7267
 #define SECOND_TARGET 0x7B8B
 #define THIRD_TARGET 0x2b69
+#define FOURTH_TARGET 0xe715
 
-//menu size
-const int menu_size = 8;
 
 //we are using a structure for each menu item, which holds the menu's string,
 //the target xbee, and related the command we're supposed to send when selecting it
@@ -40,6 +39,9 @@ struct menu_item
   uint16_t target;
   char command;
 };
+
+//menu size
+const int menu_size = 10;
 
 ////We're initializing the commands, targets, and strings for all menu items
 struct menu_item menu_items[] =
@@ -51,7 +53,9 @@ struct menu_item menu_items[] =
   {"Shutter 2 - Close", SECOND_TARGET, CLOSE},
   {"Shutter 2 - Stop", SECOND_TARGET, HALT},
   {"Bath Light - Open", THIRD_TARGET, OPEN},
-  {"Bath Light - Close", THIRD_TARGET, CLOSE}//,
+  {"Bath Light - Close", THIRD_TARGET, CLOSE},
+  {"Bedr Light - Open", FOURTH_TARGET, OPEN},
+  {"Bedr Light - Close", FOURTH_TARGET, CLOSE}
 //  {"Shutter 1 - Open", FIRST_TARGET, OPEN},
 //  {"Shutter 1 - Close", FIRST_TARGET, CLOSE},
 //  {"Shutter 1 - Stop", FIRST_TARGET, HALT}
@@ -189,7 +193,7 @@ void display_menu(void)
   int page = (menu_pos/8);
   for(int i = page*8; (menu_size - menu_pos < 8) && (menu_size/8 == page) ? i < menu_size : i < 8*(page+1) ; i++)
   {
-    glcd.drawstring(6, i - page*8, menu_items[i - page*8].menu_string);    
+    glcd.drawstring(6, i - page*8, menu_items[i].menu_string);    
   }
   
   //if we have more than one pages, show them to the user!
@@ -218,10 +222,10 @@ void flash_menu(int delayTime, int times)
 {
   for(int i = 0; i < times ; i++)
   {
-    glcd.drawchar(0, menu_pos,SEL_BLK);
+    glcd.drawchar(0, menu_pos%8,SEL_BLK);
     glcd.display();
     delay(delayTime/times/2);
-    glcd.drawchar(0, menu_pos,SEL_STAR);
+    glcd.drawchar(0, menu_pos%8,SEL_STAR);
     glcd.display();
     delay(delayTime/times/2);
   }
