@@ -16,6 +16,9 @@ public:
 	const static int period = 100;
 	//the period we use when broadcasting our status. currently 1 min.
 	const static unsigned broadcastPeriod = 60000;
+	//the period we use when using an external sensor, in order to check
+	//for a status change, and broadcast it
+	const static unsigned changeCheckPeriod = 1000;
 	//the default pins for our switch, and the relay
 	const static int LIGHT_SWITCH = 0;
 	const static int LIGHT_PIN = 2;

@@ -81,12 +81,24 @@ void HomeAuto::do_check()
 	//initialize timestamp variables
 	static unsigned long timestamp = 0;
 	static unsigned long broadcastTimestamp = 0;
+	static unsigned long changeCheckTimestamp = 0;
+	static bool old_light_status = 0;
 
 	if(light_switch > 1 && millis() - timestamp > period)
 	{
 		//if it's time to check the button, do so
 		sampleButton();
 		timestamp=millis();
+	}
+	
+	if(millis() - changeCheckTimestamp > changeCheckPeriod)
+	{
+		if(old_light_status != external_light_status)
+		{
+			old_light_status = external_light_status;
+			broadcastState();				
+		}
+		changeCheckTimestamp = millis();
 	}
 
 	if(millis() - broadcastTimestamp > broadcastPeriod)
@@ -109,7 +121,7 @@ void HomeAuto::setLight(bool value)
 	lightState = value;
 	// Serial.print("Light is ");
 	// Serial.println(lightState, DEC);
-	broadcastState();
+	// broadcastState();
 }
 
 void HomeAuto::sampleButton(void)
