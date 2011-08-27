@@ -1,6 +1,7 @@
 /*
-  XBeeRadio.h - Library for communicating with heterogenous 802.15.4 networks.
-  Created by Vasileios Georgitzikis, November 23, 2010.
+  	XBeeRadio.h - Library for communicating with heterogenous 802.15.4 networks.
+	Created by Vasileios Georgitzikis, November 23, 2010.
+	Last edit: August 27, 2011
 */
 
 #ifndef HomeAuto_h
