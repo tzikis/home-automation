@@ -88,10 +88,13 @@ public:
 	int buttonPin2;     // the number of the 2nd pushbutton pin
 	int ledPin;      // the number of the LED pin
 	int ledPin2;      // the number of the 2nd LED pin
+	
+	int flipButton;
 
 	void setup(void);
 	void setup(long baudrate);
 	void check(void);
+	void setPullUpButtons(bool set);
 	Shutters(int light_pin1, int light_pin2, int light_switch1, int light_switch2);
 private:
 	void init(int light_pin1, int light_pin2, int light_switch1, int light_switch2);

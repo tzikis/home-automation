@@ -7,6 +7,7 @@ Shutters wtf = Shutters(2,3,4,5);
 void setup()
 {
   wtf.setup(57600);
+  wtf.setPullUpButtons(true);
 }
 
 void loop()

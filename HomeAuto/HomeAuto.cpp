@@ -292,6 +292,13 @@ void Shutters::handleFSM(int currentButtonState)
 //  oldFSM = FSM;
 }
 
+void Shutters::setPullUpButtons(bool set)
+{
+	digitalWrite(buttonPin, set);     
+	digitalWrite(buttonPin2, set);   
+	flipButton = set;  
+}
+
 
 int Shutters::checkForButtons(void)
 {
@@ -310,8 +317,8 @@ int Shutters::checkForButtons(void)
     static int buttonState2 = 0, oldButtonState2 = 0, holdButtonState2 = 0; // variable for reading the 2nd pushbutton status
     
     // read the state of the pushbutton values:
-    buttonState = digitalRead(buttonPin);
-    buttonState2 = digitalRead(buttonPin2);
+    buttonState = digitalRead(buttonPin) ^ flipButton;
+    buttonState2 = digitalRead(buttonPin2) ^ flipButton;
     
     if(buttonState == HIGH) holdButtonState++;
     if(buttonState2 == HIGH) holdButtonState2++;
@@ -382,6 +389,7 @@ void Shutters::do_setup(long baudrate)
 	
 	FSM_State = 0;
 	ourState = STATE_UNDEF;
+	flipButton = false;
 	// initialize the LED pins as an outputs:
   pinMode(ledPin, OUTPUT);      
   pinMode(ledPin2, OUTPUT);      
