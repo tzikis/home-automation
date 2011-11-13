@@ -40,16 +40,16 @@ void HomeAuto::setup(long baudrate)
 	{
 		sensors[i]->setup();
 	}
+	broadcastAll();
 }
 //let the world know our current state
-void HomeAuto::broadcastState(void)
+void HomeAuto::broadcastMessage(char header, uint8_t number, char* state)
 {
 	// int status_report = checking_externally ? external_light_status : lightState;
-	int status_report = 0;
-	if(status_report)
-		Serial.print(STATE_ON, BYTE);
-	else
-		Serial.print(STATE_OFF, BYTE);
+	Serial.print(header);
+	Serial.print(number, DEC);
+	Serial.print(state);
+	Serial.print('F');
 }
 
 //this is our listener function
@@ -64,26 +64,40 @@ void HomeAuto::checkForMessages(void)
 			char bla = (char) Serial.read();
 			if(bla == V2_HEADER)
 			{
-				Serial.println("Got Header");
-				char bla = (char) Serial.read();
+				// Serial.println("Got Header");
+				unsigned long tmpTimestamp = millis();
+				do
+				{
+					bla = (char) Serial.read();					
+				}
+				while(bla == -1 && (millis() - tmpTimestamp < 500));
+				
 				if(bla > 47 && bla < 53)
 				{
-					Serial.print("Got Number: ");
-					Serial.println(bla-48, DEC);
+					// Serial.print("Got Number: ");
+					// Serial.println(bla-48, DEC);
 					int target = bla - 48;
 					char message[10];
 					for(int i = 0; i < 10 ; i++)
 					{
-						message[i] = (char) Serial.read();
+						do
+						{
+							bla = (char) Serial.read();					
+						}
+						while(bla == -1 && (millis() - tmpTimestamp < 500));
+						
+						message[i] = bla;
+						
 						if(message[i] == V2_FOOTER)
 						{
-							Serial.println("Got Footer");
+							// Serial.println("Got Footer");
 							message[i]= '\0';
 							break;
 						}
 					}
-					Serial.print(message);
-					sensors[target]->setState(message);
+					// Serial.print(message);
+					if(target < sensorsOffset)
+						sensors[target]->setState(message);
 				}
 			}
 		}
@@ -139,13 +153,28 @@ void HomeAuto::check(void)
 			// Serial.print("Sensor: ");
 			// Serial.println(i);
 			sensors[i]->mustBroadcast=false;
-			// BROADCAST STATE HERE **********$*#######***********************################
-			Serial.print("R");
-			Serial.print(i, DEC);
-			Serial.print("F");
+			BROADCAST_STATE(i, sensors[i]->getState());
 		}
 	}
+	  static unsigned long broadcastTimestamp = 0;
+	  if(millis() - broadcastTimestamp > broadcastPeriod)
+	  {
+	    //if it's time to broadcast our state, do so
+	    broadcastTimestamp = millis();
+		broadcastAll();
+	  }
+	
 	checkForMessages();	
+}
+
+void HomeAuto::broadcastAll()
+{
+	BROADCAST_NAME(0x9, name);
+	for(int i = 0; i < sensorsOffset; i++)
+	{
+		BROADCAST_STATE(i, sensors[i]->getState());
+		BROADCAST_NAME(i, sensors[i]->name);			
+	}	
 }
 
 Sensor::Sensor()
@@ -180,6 +209,13 @@ void Sensor::setup()
 void Sensor::check(void)
 {
 	// Serial.println("LOLcheck");
+}
+char* Sensor::getState()
+{
+	char* state = (char*) malloc(sizeof(char)*1);
+	state[0] = '\0';
+	return state;
+	// Serial.println("LOLsetstate");
 }
 void Sensor::setState(char* newState)
 {
@@ -295,6 +331,18 @@ void Light::sampleButton(void)
 		lastSwitchState = currentSwitchState;
 		setLight(!lightState);
 	}
+}
+
+char* Light::getState()
+{
+	// char state[2];
+	char* state = (char*) malloc(sizeof(char) * 2);
+	if(lightState)
+		state[0] = 'O';
+	else
+		state[0] = 'C';
+	state[1] = '\0';
+	return state;
 }
 
 void Light::setState(char* newState)

@@ -21,8 +21,20 @@
 
 #define STARTING 45
 
+#pragma mark headers
+
 #define V2_HEADER 'H'
+#define V2_NAME 'N'
+#define V2_TYPES 'T'
+#define V2_REPORT 'R'
+
+#pragma mark footer
+
 #define V2_FOOTER 'F'
+
+#pragma mark message_types
+
 #define V2_OPEN 'O'
 #define V2_CLOSE 'C'
 #define V2_STOP 'S'
+

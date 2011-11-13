@@ -10,6 +10,8 @@
 #include <ethernet_xbee_defs.h>
 #include "WProgram.h"
 
+#define BROADCAST_STATE(X,Y) broadcastMessage('R', X, Y)
+#define BROADCAST_NAME(X,Y) broadcastMessage('N', X, Y)
 
 typedef struct pins
 {
@@ -27,6 +29,7 @@ public:
 	virtual pins usedPins();
 	virtual void setup();
 	virtual void check(void);
+	virtual char* getState();
 	virtual void setState(char* newState);
 	virtual void enablePullups(void);
 	bool mustBroadcast;
@@ -47,6 +50,7 @@ public:
 	virtual pins usedPins();
 	virtual void setup();
 	void virtual check(void);
+	virtual char* getState();
 	virtual void setState(char* newState);
 protected:
 	const static int period = 100;
@@ -78,7 +82,8 @@ public:
 	void check(void);
 	void addSensor(Sensor* newSensor);
 private:
-	void broadcastState(void);
+	void broadcastAll();
+	void broadcastMessage(char header, uint8_t number, char* state);
 	void checkForMessages(void);
 	void init(char name[]);
 	int sensorsOffset;
