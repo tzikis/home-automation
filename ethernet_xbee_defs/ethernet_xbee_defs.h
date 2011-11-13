@@ -20,3 +20,9 @@
 #define HALT 44
 
 #define STARTING 45
+
+#define V2_HEADER 'H'
+#define V2_FOOTER 'F'
+#define V2_OPEN 'O'
+#define V2_CLOSE 'C'
+#define V2_STOP 'S'
