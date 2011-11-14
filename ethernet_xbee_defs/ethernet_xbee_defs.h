@@ -25,7 +25,6 @@
 
 #define V2_HEADER 'H'
 #define V2_NAME 'N'
-#define V2_TYPES 'T'
 #define V2_REPORT 'R'
 
 #pragma mark footer
