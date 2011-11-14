@@ -37,4 +37,5 @@
 #define V2_OPEN 'O'
 #define V2_CLOSE 'C'
 #define V2_STOP 'S'
+#define V2_UNDEF 'U'
 

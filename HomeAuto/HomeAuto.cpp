@@ -292,11 +292,6 @@ void Light::setup()
 
 void Light::check(void)
 {
-	do_check();
-}
-
-void Light::do_check()
-{
 //initialize timestamp variables
 	static unsigned long timestamp = 0;
 	if(light_switch > 1 && millis() - timestamp > period)
@@ -338,9 +333,9 @@ char* Light::getState()
 	// char state[2];
 	char* state = (char*) malloc(sizeof(char) * 2);
 	if(lightState)
-		state[0] = 'O';
+		state[0] = V2_OPEN;
 	else
-		state[0] = 'C';
+		state[0] = V2_CLOSE;
 	state[1] = '\0';
 	return state;
 }
@@ -353,232 +348,219 @@ void Light::setState(char* newState)
 		setLight(0);	
 }
 
-// Shutters::Shutters(int light_pin1, int light_pin2, int light_switch1, int light_switch2)
-// {
-// 	init(light_pin1, light_pin2, light_switch1, light_switch2);
-// }
-// 
-// 
-// void Shutters::setup(void)
-// {
-// 	do_setup(DEFAULT_BAUDRATE);
-// }
-// void Shutters::setup(long baudrate)
-// {
-// 	do_setup(baudrate);
-// }
-// void Shutters::check(void)
-// {
-// 	  checkForMessages();
-// 
-// 	  int buttonState = checkForButtons();
-// 
-// 	//  if(buttonState != 0)
-// 	//    Serial.print("Button State: ");
-// 	//    Serial.println(buttonState, DEC);
-// 
-// 	  handleFSM(buttonState);
-// 
-// 	  delay(50);
-// 
-// 
-// 	  static unsigned long broadcastTimestamp = 0;
-// 	  if(millis() - broadcastTimestamp > broadcastPeriod)
-// 	  {
-// 	    //if it's time to broadcast our state, do so
-// 	    broadcastTimestamp = millis();
-// 	    broadcastState();
-// 	  }
-// }
-// 
-// void Shutters::init(int light_pin1, int light_pin2, int light_switch1, int light_switch2)
-// {
-// 	ledPin = light_pin1;
-// 	ledPin2 = light_pin2;
-// 	buttonPin = light_switch1;
-// 	buttonPin2 = light_switch2;
-// }
-// 
-// void Shutters::handleFSM(int currentButtonState)
-// {
-//     static int FSM = 0;
-// //  static int oldFSM = 0;
-// 
-//   if(FSM == 0)
-//   {
-//     digitalWrite(ledPin, LOW);
-//     digitalWrite(ledPin2, LOW);
-//     FSM = currentButtonState;
-//   }
-//   else if(FSM == 1)
-//   {
-//     digitalWrite(ledPin, HIGH);
-//     digitalWrite(ledPin2, LOW);
-//     ourState = STATE_UNDEF;
-//     FSM = currentButtonState;
-//   }
-//   else if(FSM == 2)
-//   {
-//     digitalWrite(ledPin, LOW);
-//     digitalWrite(ledPin2, HIGH);
-//     ourState = STATE_UNDEF;
-//     FSM = currentButtonState;    
-//   }
-//   else if(FSM == 3)
-//   {    
-//     digitalWrite(ledPin, HIGH);
-//     digitalWrite(ledPin2, LOW);
-//     if(currentButtonState == 2 || currentButtonState == 4) FSM = 5;
-//     
-//     static unsigned long startingTimestamp = 0;
-//     if(startingTimestamp == 0) startingTimestamp = millis();
-//     if(millis() - startingTimestamp > time_to_light)
-//     {
-//       startingTimestamp = 0;
-//       ourState = STATE_ON;
-//       broadcastState();
-//       FSM = 5;
-//     }
-// 
-//   }
-//   else if(FSM == 4)
-//   {
-//     digitalWrite(ledPin, LOW);
-//     digitalWrite(ledPin2, HIGH);
-//     if(currentButtonState == 1 || currentButtonState == 3) FSM = 5;
-//     
-//     static unsigned long startingTimestamp = 0;
-//     if(startingTimestamp == 0) startingTimestamp = millis();
-//     if(millis() - startingTimestamp > time_to_light)
-//     {
-//       startingTimestamp = 0;
-//       ourState = STATE_OFF;
-//       broadcastState();
-//       FSM = 5;
-//     }
-// 
-//   }
-//   else if(FSM == 5)
-//   {
-//     digitalWrite(ledPin, LOW);
-//     digitalWrite(ledPin2, LOW);
-//     delay(150);    
-//     FSM = 0;
-//   } 
-// //  if(oldFSM != FSM)
-// //  {
-// //    Serial.print("FSM: ");
-// //    Serial.println(FSM, DEC);
-// //  }
-// //  oldFSM = FSM;
-// }
-// 
-// void Shutters::setPullUpButtons(bool set)
-// {
-// 	digitalWrite(buttonPin, set);     
-// 	digitalWrite(buttonPin2, set);   
-// 	flipButton = set;  
-// }
-// 
-// 
-// int Shutters::checkForButtons(void)
-// {
-//   //The following variables will be used to check wether the intervals have passed
-//   static unsigned long timestamp = 0, holdTimestamp =0;
-//   const unsigned long buttonCheckInterval = 100;  // interval at which to check for button press (milliseconds)
-//   const unsigned long decisionInterval = 500;
-//   static unsigned long buttonDecideInterval = decisionInterval; // interval at which to decide if we are holding the button (milliseconds)  
-//   
-//   static int returnValue = 0;
-//       
-//   if(millis() - timestamp > buttonCheckInterval)
-//   {
-// 
-//     static int buttonState = 0, oldButtonState = 0, holdButtonState = 0; // variable for reading the pushbutton status
-//     static int buttonState2 = 0, oldButtonState2 = 0, holdButtonState2 = 0; // variable for reading the 2nd pushbutton status
-//     
-//     // read the state of the pushbutton values:
-//     buttonState = digitalRead(buttonPin) ^ flipButton;
-//     buttonState2 = digitalRead(buttonPin2) ^ flipButton;
-//     
-//     if(buttonState == HIGH) holdButtonState++;
-//     if(buttonState2 == HIGH) holdButtonState2++;
-//     
-//     
-//     if(buttonState == LOW)
-//     {
-//       if(oldButtonState == HIGH && holdButtonState < 2)
-//         returnValue = 3;
-//       else if(returnValue == 3)
-//         returnValue = 0;
-//       holdButtonState = 0;
-//     }
-//     
-//     if(buttonState2 == LOW)
-//     {
-//       if(oldButtonState2 == HIGH && holdButtonState2 < 2) 
-//         returnValue = 4;
-//       else if(returnValue == 4)
-//         returnValue = 0;
-//       holdButtonState2 = 0;
-//     }
-//     
-//     if(millis() - holdTimestamp > buttonDecideInterval)
-//     {
-//       if(holdButtonState > 1)
-//       {
-//         returnValue = 1;
-//       }
-//       else if(holdButtonState2 > 1)
-//       {
-//         returnValue = 2;
-//       }
-//       else if(returnValue == 1 || returnValue == 2)
-//         returnValue = 0;
-//       
-//       holdTimestamp = millis();
-//     }
-//     
-//     oldButtonState = buttonState;
-//     oldButtonState2 = buttonState2;
-//     
-//     timestamp = millis();
-//   }
-// //  if(returnValue != 0) delay(50);
-//   return returnValue;
-// }
-// 
-// void Shutters::checkForMessages(void)
-// {
-//   if (Serial.available())
-//   {
-//     char bla = (char) Serial.read();
-//     if(bla == OPEN) FSM_State = 2;
-//     else if(bla == CLOSE) FSM_State = 4;
-//     else if(bla == HALT) FSM_State = 0;
-//   }
-// }
-// 
-// //let the world know our current state
-// void Shutters::broadcastState(void)
-// {
-//   Serial.print(ourState, BYTE);
-// }
-// 
-// void Shutters::do_setup(long baudrate)
-// {
-// 	
-// 	FSM_State = 0;
-// 	ourState = STATE_UNDEF;
-// 	flipButton = false;
-// 	// initialize the LED pins as an outputs:
-//   pinMode(ledPin, OUTPUT);      
-//   pinMode(ledPin2, OUTPUT);      
-//   // initialize the pushbutton pins as an inputs:
-//   pinMode(buttonPin, INPUT);     
-//   pinMode(buttonPin2, INPUT);   
-// 
-//   //XBee shit from now on
-//   Serial.begin(baudrate);
-//   Serial.print(STARTING, BYTE);
-// }
+pins Shutters::usedPins(void)
+{
+	pins retVal;
+	retVal.numOfPins=4;
+	retVal.pinsUsed[0]=ledPin;
+	retVal.pinsUsed[1]=ledPin2;
+	retVal.pinsUsed[2]=buttonPin;
+	retVal.pinsUsed[3]=buttonPin2;
+	return retVal;
+}
+
+
+Shutters::Shutters(int light_pin1, int light_pin2, int light_switch1, int light_switch2)
+{
+	init("unknown", light_pin1, light_pin2, light_switch1, light_switch2);
+}
+Shutters::Shutters(char name[], int light_pin1, int light_pin2, int light_switch1, int light_switch2)
+{
+	init(name, light_pin1, light_pin2, light_switch1, light_switch2);
+}
+
+void Shutters::setup(void)
+{
+// initialize the LED pins as an outputs:
+	pinMode(ledPin, OUTPUT);      
+	pinMode(ledPin2, OUTPUT);      
+// initialize the pushbutton pins as an inputs:
+	pinMode(buttonPin, INPUT);     
+	pinMode(buttonPin2, INPUT);   
+	if(pullups)
+	{
+		digitalWrite(buttonPin, HIGH);
+		digitalWrite(buttonPin2, HIGH);		
+	}
+}
+
+void Shutters::check(void)
+{
+// checkForMessages();
+	int buttonState = checkForButtons();
+	handleFSM(buttonState);
+	delay(50);
+}
+
+void Shutters::init(char name[], int light_pin1, int light_pin2, int light_switch1, int light_switch2)
+{
+	Sensor::init(name);
+	ledPin = light_pin1;
+	ledPin2 = light_pin2;
+	buttonPin = light_switch1;
+	buttonPin2 = light_switch2;
+	FSM_State = 0;
+	ourState = V2_UNDEF;
+}
+
+void Shutters::handleFSM(int currentButtonState)
+{
+// static int FSM = 0;
+//  static int oldFSM = 0;
+
+	if(FSM_State == 0)
+	{
+		digitalWrite(ledPin, LOW);
+		digitalWrite(ledPin2, LOW);
+
+		FSM_State = currentButtonState;
+	}
+	else if(FSM_State == 1)
+	{
+		digitalWrite(ledPin, HIGH);
+		digitalWrite(ledPin2, LOW);
+		ourState = V2_UNDEF;
+		if(FSM_State != currentButtonState)
+			mustBroadcast = true;
+		FSM_State = currentButtonState;
+	}
+	else if(FSM_State == 2)
+	{
+		digitalWrite(ledPin, LOW);
+		digitalWrite(ledPin2, HIGH);
+		ourState = V2_UNDEF;
+		if(FSM_State != currentButtonState)
+			mustBroadcast = true;
+		FSM_State = currentButtonState;    
+	}
+	else if(FSM_State == 3)
+	{    
+		digitalWrite(ledPin, HIGH);
+		digitalWrite(ledPin2, LOW);
+		ourState = V2_UNDEF;
+		if(currentButtonState == 2 || currentButtonState == 4) 
+			FSM_State = 5;
+
+		static unsigned long startingTimestamp = 0;
+		if(startingTimestamp == 0)
+			startingTimestamp = millis();
+		if(millis() - startingTimestamp > time_to_light)
+		{
+			startingTimestamp = 0;
+			ourState = V2_OPEN;
+			// broadcastState();
+			FSM_State = 5;
+		}
+
+	}
+	else if(FSM_State == 4)
+	{
+		digitalWrite(ledPin, LOW);
+		digitalWrite(ledPin2, HIGH);
+		ourState = V2_UNDEF;
+		if(currentButtonState == 1 || currentButtonState == 3)
+			FSM_State = 5;
+
+		static unsigned long startingTimestamp = 0;
+		if(startingTimestamp == 0) startingTimestamp = millis();
+		if(millis() - startingTimestamp > time_to_light)
+		{
+			startingTimestamp = 0;
+			ourState = V2_CLOSE;
+			// broadcastState();
+			FSM_State = 5;
+		}
+
+	}
+	else if(FSM_State == 5)
+	{
+		digitalWrite(ledPin, LOW);
+		digitalWrite(ledPin2, LOW);
+		delay(150);    
+		mustBroadcast = true;
+		FSM_State = 0;
+	} 
+}
+
+int Shutters::checkForButtons(void)
+{
+//The following variables will be used to check wether the intervals have passed
+	static unsigned long timestamp = 0, holdTimestamp =0;
+	const unsigned long buttonCheckInterval = 100;  // interval at which to check for button press (milliseconds)
+	const unsigned long decisionInterval = 500;
+	static unsigned long buttonDecideInterval = decisionInterval; // interval at which to decide if we are holding the button (milliseconds)  
+
+	static int returnValue = 0;
+
+	if(millis() - timestamp > buttonCheckInterval)
+	{
+
+		static int buttonState = 0, oldButtonState = 0, holdButtonState = 0; // variable for reading the pushbutton status
+		static int buttonState2 = 0, oldButtonState2 = 0, holdButtonState2 = 0; // variable for reading the 2nd pushbutton status
+
+// read the state of the pushbutton values:
+		buttonState = digitalRead(buttonPin) ^ pullups;
+		buttonState2 = digitalRead(buttonPin2) ^ pullups;
+
+		if(buttonState == HIGH) holdButtonState++;
+		if(buttonState2 == HIGH) holdButtonState2++;
+
+
+		if(buttonState == LOW)
+		{
+			if(oldButtonState == HIGH && holdButtonState < 2)
+				returnValue = 3;
+			else if(returnValue == 3)
+				returnValue = 0;
+			holdButtonState = 0;
+		}
+
+		if(buttonState2 == LOW)
+		{
+			if(oldButtonState2 == HIGH && holdButtonState2 < 2) 
+				returnValue = 4;
+			else if(returnValue == 4)
+				returnValue = 0;
+			holdButtonState2 = 0;
+		}
+
+		if(millis() - holdTimestamp > buttonDecideInterval)
+		{
+			if(holdButtonState > 1)
+			{
+				returnValue = 1;
+			}
+			else if(holdButtonState2 > 1)
+			{
+				returnValue = 2;
+			}
+			else if(returnValue == 1 || returnValue == 2)
+				returnValue = 0;
+
+			holdTimestamp = millis();
+		}
+
+		oldButtonState = buttonState;
+		oldButtonState2 = buttonState2;
+
+		timestamp = millis();
+	}
+//  if(returnValue != 0) delay(50);
+	return returnValue;
+}
+
+char* Shutters::getState()
+{
+	char* state = (char*) malloc(sizeof(char) * 2);
+	state[0] = ourState;
+	state[1] = '\0';
+	return state;
+}
+
+void Shutters::setState(char* newState)
+{
+	if(newState[0] == V2_OPEN) FSM_State = 3;
+	else if(newState[0] == V2_CLOSE) FSM_State = 4;
+	else if(newState[0] == V2_STOP) FSM_State = 0;
+
+}
